@@ -1,5 +1,4 @@
 import arcade
-import random
 
 WIDTH = 800
 HEIGHT = 800
@@ -16,7 +15,6 @@ class Ball:
         self.dx = 100
         self.dy = 300
 
-
     def draw(self):
         arcade.draw_circle_filled(self.x, self.y, self.radius, self.color)
 
@@ -25,7 +23,7 @@ class Ball:
         self.y = self.y + self.dy * delta_time
         if self.x >= WIDTH - self.radius or self.x <= 0 + self.radius:
             self.dx = -self.dx
-        if self. y  >= HEIGHT - self.radius or self.y <= 0 + self.radius:
+        if self. y >= HEIGHT - self.radius or self.y <= 0 + self.radius:
             self.dy = -self.dy
 
 
@@ -46,8 +44,6 @@ class MyGame(arcade.Window):
         arcade.start_render()
         self.ball.draw()
         self.ball1.draw()
-
-
 
 
 MyGame().run()
