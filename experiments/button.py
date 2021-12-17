@@ -9,7 +9,7 @@ PRESSED = 1
 class Button(arcade.Sprite):
     """Класс кнопки"""
 
-    def __init__(self,center_x=0, center_y=0, normal_img='', pressed_img='', scale=1,
+    def __init__(self, center_x=0, center_y=0, normal_img='', pressed_img='', scale=1,
                  text=''):
         super().__init__(scale=scale)
         """
@@ -43,18 +43,18 @@ class Button(arcade.Sprite):
                              anchor_x='center', anchor_y='center',
                              bold=True)
 
-    def on_mousse_press(self, x: float, y: float, button: int):
+    def on_mouse_press(self, x: float, y: float, button: int):
         """Обработчик нажатия на кнопку"""
         if button == arcade.MOUSE_BUTTON_LEFT:
             if self.collides_with_point((x, y)):
                 self.status = PRESSED
-                if self._binded_function:
-                    self._binded_function()
 
-    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
+    def on_mouse_release(self, x: float, y: float, button: int):
         """Обработчик отпускания кнопки мыши"""
-        if button == arcade.MOUSE_BUTTON_LEFT:
+        if button == arcade.MOUSE_BUTTON_LEFT and self.status == PRESSED:
             self.status = NORMAL
+            if self._binded_function and self.collides_with_point((x, y)):
+                self._binded_function()
 
     def on_update(self, delta_time: float = 1 / 60):
         self.texture = self.textures[self.status]
@@ -68,21 +68,29 @@ class MyGame(arcade.Window):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.WHITE_SMOKE
-        self.button = Button(100, 100, scale=0.8, text='ОК')
+        self.button_lst = []
+        button = Button(100, 100, scale=0.8, text='ОК')
+        self.button_lst.append(button)
+        button = Button(300, 100, scale=0.8, text='EXIT')
+        button.bind(arcade.exit)
+        self.button_lst.append(button)
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        self.button.on_mousse_press(x, y, button)
+        for b in self.button_lst:
+            b.on_mouse_press(x, y, button)
 
-    def on_mouse_release(self, x: float, y: float, button: int,
-                         modifiers: int):
-        self.button.on_mouse_release(x, y, button, modifiers)
+    def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
+        for b in self.button_lst:
+            b.on_mouse_release(x, y, button)
 
     def on_update(self, delta_time: float):
-        self.button.on_update()
+        for button in self.button_lst:
+            button.on_update(delta_time)
 
     def on_draw(self):
         arcade.start_render()
-        self.button.draw()
+        for button in self.button_lst:
+            button.draw()
 
 
 if __name__ == '__main__':
