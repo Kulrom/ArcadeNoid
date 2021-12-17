@@ -6,6 +6,9 @@ NORMAL = 0
 PRESSED = 1
 
 
+def printer():
+    print('Кнопка нажата')
+
 class Button(arcade.Sprite):
     """Класс кнопки"""
 
@@ -70,6 +73,7 @@ class MyGame(arcade.Window):
         self.background_color = arcade.color.WHITE_SMOKE
         self.button_lst = []
         button = Button(100, 100, scale=0.8, text='ОК')
+        button.bind(printer)
         self.button_lst.append(button)
         button = Button(300, 100, scale=0.8, text='EXIT')
         button.bind(arcade.exit)
