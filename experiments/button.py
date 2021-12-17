@@ -9,7 +9,8 @@ PRESSED = 1
 class Button(arcade.Sprite):
     """Класс кнопки"""
 
-    def __init__(self, normal_img='', pressed_img='', scale=1):
+    def __init__(self,center_x=0, center_y=0, normal_img='', pressed_img='', scale=1,
+                 text=''):
         super().__init__(scale=scale)
         """
         normal_img: текстура кнопки в нормальном состоянии
@@ -24,6 +25,9 @@ class Button(arcade.Sprite):
 
         self.status = NORMAL
         self._binded_function = None
+        self.center_x = center_x
+        self.center_y = center_y
+        self.text = text
 
     def _load_textures(self, normal_img, pressed_img):
         """Загружает текстуры кнопки из файлов ресурсов"""
@@ -32,43 +36,49 @@ class Button(arcade.Sprite):
         texture = arcade.load_texture(pressed_img)
         self.textures.append(texture)
 
-    def on_mousse_press(self, x: float, y: float, button: int, modifiers: int):
+    def draw(self, *, filter=None, pixelated=None, blend_function=None):
+        super().draw(filter=None, pixelated=None, blend_function=None)
+        if self.text:
+            arcade.draw_text(self.text, self.center_x, self.center_y,
+                             anchor_x='center', anchor_y='center',
+                             bold=True)
+
+    def on_mousse_press(self, x: float, y: float, button: int):
         """Обработчик нажатия на кнопку"""
-        if self.collides_with_point((x, y)):
-            self.status = PRESSED
-            if self._binded_function:
-                self._binded_function()
+        if button == arcade.MOUSE_BUTTON_LEFT:
+            if self.collides_with_point((x, y)):
+                self.status = PRESSED
+                if self._binded_function:
+                    self._binded_function()
 
     def on_mouse_release(self, x: float, y: float, button: int, modifiers: int):
         """Обработчик отпускания кнопки мыши"""
-        self.status = NORMAL
+        if button == arcade.MOUSE_BUTTON_LEFT:
+            self.status = NORMAL
+
+    def on_update(self, delta_time: float = 1 / 60):
+        self.texture = self.textures[self.status]
 
     def bind(self, function):
         """Привязывает функцию или метод к кнопке"""
         self._binded_function = function
-
-    def update(self):
-        self.texture = self.textures[self.status]
 
 
 class MyGame(arcade.Window):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.WHITE_SMOKE
-        self.button = Button(scale=0.5)
-        self.button.center_x = 100
-        self.button.center_y = 100
-        self.button.bind(arcade.exit)
+        self.button = Button(100, 100, scale=0.8, text='ОК')
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
-        self.button.on_mousse_press(x, y, button, modifiers)
+        self.button.on_mousse_press(x, y, button)
 
     def on_mouse_release(self, x: float, y: float, button: int,
                          modifiers: int):
         self.button.on_mouse_release(x, y, button, modifiers)
 
-    def update(self, delta_time: float):
-        self.button.update()
+    def on_update(self, delta_time: float):
+        self.button.on_update()
 
     def on_draw(self):
         arcade.start_render()
