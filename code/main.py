@@ -5,6 +5,7 @@ import arcade
 
 from configs import WIDTH, HEIGHT, TITLE, N
 from ball import Ball
+from paddle import Paddle
 
 
 def random_color():
@@ -14,31 +15,34 @@ def random_color():
     return (r, g, b)
 
 
-
-
-
 class MyGame(arcade.Window):
     def __init__(self):
         super().__init__(WIDTH, HEIGHT, TITLE)
         self.background_color = arcade.color.BLOND
-        self.balls = []
-        for i in range(N):
-            self.balls.append(Ball(random.randrange(WIDTH), random.randrange(HEIGHT), 20, arcade.color.CARIBBEAN_GREEN))
+        self.paddle = Paddle(WIDTH * 0.5, HEIGHT/16)
+        self.ball = Ball(100, 100)
 
     def update(self, delta_time: float):
-        for i in range(N):
-            self.balls[i].update(delta_time)
-            for j in range(N):
-                if i != j:
-                    colision = self.balls[i].is_colise_other_ball(self.balls[j])
-                    if colision == True:
-                        self.balls[i].color = random_color()
+        self.ball.update(delta_time)
+        self.paddle.update(delta_time)
 
 
     def on_draw(self):
         arcade.start_render()
-        for i in range(N):
-            self.balls[i].draw()
+        self.ball.draw()
+        self.paddle.draw()
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.LEFT:
+            self.paddle.move_left = True
+        elif symbol == arcade.key.RIGHT:
+            self.paddle.move_right = True
+
+    def on_key_release(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.LEFT:
+            self.paddle.move_left = False
+        elif symbol == arcade.key.RIGHT:
+            self.paddle.move_right = False
 
 
 MyGame().run()

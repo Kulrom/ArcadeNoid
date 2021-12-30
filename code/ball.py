@@ -3,7 +3,7 @@ import math
 
 from configs import *
 
-class Ball:
+class OldBall:
     def __init__(self, x, y, radius, color):
         self.radius = radius
         self.x = x
@@ -50,3 +50,28 @@ class Ball:
             return True
         else:
             return False
+
+class Ball(arcade.Sprite):
+    def __init__(self, center_x, center_y):
+        super().__init__('..\\resources\\png\\ballGrey.png', scale=SPRITE_SCALE)
+        self.radius = self.width * 0.5
+        self.dx = 100
+        self.dy = 300
+        self.center_x = center_x
+        self.center_y = center_y
+
+    def update(self, dt):
+        self.center_x = self.center_x + self.dx * dt
+        self.center_y = self.center_y + self.dy * dt
+        if self.center_x <= 0 + self.radius:
+            self.dx = - self.dx
+            self.center_x = 0 + self.radius
+        if self.center_x >= WIDTH - self.radius:
+            self.dx = - self.dx
+            self.center_x = WIDTH - self.radius
+        if self.center_y <= 0 + self.radius:
+            self.dy = - self.dy
+            self.center_y = 0 + self.radius
+        if self.center_y >= HEIGHT - self.radius:
+            self.dy = - self.dy
+            self.center_y = HEIGHT - self.radius
