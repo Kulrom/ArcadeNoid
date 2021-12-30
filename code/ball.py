@@ -19,10 +19,19 @@ class Ball:
     def update(self, delta_time):
         self.x = self.x + self.dx * delta_time
         self.y = self.y + self.dy * delta_time
-        if self.x >= WIDTH - self.radius or self.x <= 0 + self.radius:
-            self.dx = -self.dx
-        if self. y >= HEIGHT - self.radius or self.y <= 0 + self.radius:
-            self.dy = -self.dy
+        if self.x <= 0 + self.radius:
+            self.dx = - self.dx
+            self.x = 0 + self.radius
+        if self.x >= WIDTH - self.radius:
+            self.dx = - self.dx
+            self.x = WIDTH - self.radius
+        if self.y <= 0 + self.radius:
+            self.dy = - self.dy
+            self.y = 0 + self.radius
+        if self.y >= HEIGHT - self.radius:
+            self.dy = - self.dy
+            self.y = HEIGHT - self.radius
+
 
     def get_dist(self, other_ball: 'Ball'):
         """вычисляет расстояние между мячами"""
